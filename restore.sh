@@ -7,7 +7,7 @@ IFS=","
 for BACKUP_NAME in $BACKUP_NAMES
 do
   # Download backup
-  aws s3 cp "s3://${S3_BUCKET}/${S3_PATH}/${BACKUP_NAME}" "/backup/${BACKUP_NAME}"
+  aws s3 cp "s3://${S3_BUCKET}/${S3_PATH}${BACKUP_NAME}" "/backup/${BACKUP_NAME}"
   # Decompress backup with progress
   cd /backup/ && pv $BACKUP_NAME | tar xzf - -C .
 
@@ -28,4 +28,3 @@ do
   # Delete backup files
   rm -rf /backup/*
 done
-

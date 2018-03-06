@@ -2,7 +2,7 @@ FROM alpine:3.7@sha256:ccba511b1d6b5f1d83825a94f9d5b05528db456d9cf14a1ea1db892c9
 
 LABEL maintainer "Leonardo Gatica <lgatica@protonmail.com>"
 
-ENV S3_PATH=mongodb AWS_DEFAULT_REGION=us-east-1
+ENV S3_PATH=mongodb/ AWS_DEFAULT_REGION=us-east-1
 
 RUN apk add --no-cache mongodb-tools py2-pip pv && \
   pip install --no-cache-dir pymongo awscli && \
