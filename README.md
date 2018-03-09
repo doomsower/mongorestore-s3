@@ -63,12 +63,6 @@ You need to add a user with the following policies. Be sure to change `your_buck
 }
 ```
 
-## Extra environmnet
-
-- `S3_PATH` - Default value is `mongodb`. Example `s3://your_bucket/mongodb/`
-- `EXTRA` - Default not set. Set extra parameters
-
-
 ## License
 
 [MIT](https://tldrlegal.com/license/mit-license)
