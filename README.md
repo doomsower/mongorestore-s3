@@ -1,56 +1,33 @@
 # mongorestore-s3
 
-[![dockeri.co](http://dockeri.co/image/lgatica/mongorestore-s3)](https://hub.docker.com/r/lgatica/mongorestore-s3/)
-
-[![Build Status](https://travis-ci.org/lgaticaq/mongorestore-s3.svg?branch=master)](https://travis-ci.org/lgaticaq/mongorestore-s3)
-
 > Docker Image with Alpine Linux, mongorestore and awscli for restore mongo backup from s3
 
 ## Use
 
-Restore complete database from backup 2016-09-20_06-00-00_UTC.gz in s3
-
 ```bash
-docker run -d --name mongorestore \
-  -v /tmp/backup:/backup
-  -e "BACKUP_NAMES=2016-09-20_06-00-00_UTC.gz"
-  -e "MONGO_URI=mongodb://user:pass@host:port/dbname"
-  -e "AWS_ACCESS_KEY_ID=your_aws_access_key"
-  -e "AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key"
-  -e "AWS_DEFAULT_REGION=us-west-1"
-  -e "S3_BUCKET=your_aws_bucket"
-  lgatica/mongorestore-s3
+docker run --rm --name mongorestore \
+  -v $(pwd)/backup:/backup \
+  --env-file .env \
+  doomsower/mongorestore-s3
 ```
 
-Restore only collections collection1 and collection2 from backup 2016-09-20_06-00-00_UTC.gz in s3
+It is required to mount volume to `/backup`
 
-```bash
-docker run -d --name mongorestore \
-  -v /tmp/backup:/backup
-  -e "BACKUP_NAMES=2016-09-20_06-00-00_UTC.gz"
-  -e "MONGO_URI=mongodb://user:pass@host:port/dbname"
-  -e "AWS_ACCESS_KEY_ID=your_aws_access_key"
-  -e "AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key"
-  -e "AWS_DEFAULT_REGION=us-west-1"
-  -e "S3_BUCKET=your_aws_bucket"
-  -e "COLLECTIONS=collection1,collection2"
-  lgatica/mongorestore-s3
-```
+## Env varibales
 
-Restore complete database from backup 2016-09-20_06-00-00_UTC.gz in s3 with "--noIndexRestore"
-
-```bash
-docker run -d --name mongorestore \
-  -v /tmp/backup:/backup
-  -e "BACKUP_NAMES=2016-09-20_06-00-00_UTC.gz"
-  -e "MONGO_URI=mongodb://user:pass@host:port/dbname"
-  -e "AWS_ACCESS_KEY_ID=your_aws_access_key"
-  -e "AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key"
-  -e "AWS_DEFAULT_REGION=us-west-1"
-  -e "S3_BUCKET=your_aws_bucket"
-  -e EXTRA="--noIndexRestore"
-  lgatica/mongorestore-s3
-```
+| Name               | Required | Default Value    | Description 
+|--------------------|----------|------------------|-------------
+| BACKUP_PATH        |          | "" (empty string)| Path in buckket where to look for backup archive. Should not start with `/`, default empty string means backup archive in bucket root
+| BACKUP_NAME        | Yes      |                  | Archive name, e.g. `wwdb_latest.tar.gz` 
+| MONGO_URI          | Yes      |                  | [Mongo Connection String](https://docs.mongodb.com/manual/reference/connection-string/). E.g. `mongodb://localhost:27017/wwdb?ssl=false`
+| MONGO_DB           | Yes      |                  | For some reason `--uri` alone is not enough, so this is mongo db name
+| MONGO_OPTIONS      |          |                  | Extra options to pass to mongorestore, e.g. `-v --drop`
+| MONGORESTORE_WAIT  |          |                  | If `true`, will use `--dryRun` first to wait until mongodb starts. Used to work with compose
+| MONGORESTORE_HANG  |          |                  | If `true` will sleep infinitely after restore process is complete
+| AWS_ACCESS_KEY     | Yes      |                  | AWS access key
+| AWS_SECRET_KEY     | Yes      |                  | AWS secret key
+| AWS_REGION         |          | eu-west-1        | AWS region
+| S3_BUCKET          | Yes      |                  | AWS bucket name
 
 ## IAM Policity
 
